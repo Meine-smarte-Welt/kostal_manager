@@ -1,12 +1,15 @@
-# SHA256 (Inhalt ab Zeile 2, d.h. dieser Datei ohne diese erste Zeile): 14bd341bc9d292e77a0b7abe2f2fa5d884db7f17f774cb8af83b99c68340ffd8
+# SHA256 (Inhalt ab Zeile 2, d.h. dieser Datei ohne diese erste Zeile): fca108f6a9ac20a8aa39568a1f13080e269305d817d22c66350739e871d91271
 """Konstanten für den Kostal Manager."""
 from __future__ import annotations
 
 DOMAIN = "kostal_manager"
-VERSION = "1.0.0b1"
+VERSION = "1.0.0b2"
 GITHUB_REPO = "Meine-smarte-Welt/kostal_manager"  # Vorschlag, vor Veröffentlichung bestätigen
 KOSTAL_DOMAIN = "kostal_plenticore"
 CARD_FILE = "kostal-manager-card.js"
+PANEL_FILE = "kostal-manager-panel.js"
+PANEL_URL_PATH = "kostal-manager"
+PANEL_ELEMENT = "kostal-manager-panel"
 URL_BASE = f"/{DOMAIN}_files"
 
 # Konfiguration (config_entry.data / options)
@@ -31,8 +34,9 @@ FLUSH_DELAY = 0.5
 
 # Experimentelle Funktionen (Registry, schlüsselgleich zur Karte)
 EXPERIMENTAL_FEATURES: dict[str, dict[str, str]] = {
-    "ksem": {"since": "1.0.0b1", "icon": "mdi:meter-electric"},
     "efficiency": {"since": "1.0.0b1", "icon": "mdi:percent-circle"},
+    "history7": {"since": "1.0.0b1", "icon": "mdi:chart-bar"},
+    "panel": {"since": "1.0.0b1", "icon": "mdi:view-dashboard"},
 }
 
 ACTIONS = ("refresh", "enable_sensors", "set_number", "set_switch")

@@ -1,4 +1,4 @@
-# SHA256 (Inhalt ab Zeile 2, d.h. dieser Datei ohne diese erste Zeile): 29c3d347db32cacfafb3a04da7409328041fb3b5abcdb6895a2b2c88bc5117ba
+# SHA256 (Inhalt ab Zeile 2, d.h. dieser Datei ohne diese erste Zeile): 52ee927ea303bca44548e94d1003c0cbfa36cd3060189d256149d27a4f7bd68f
 """Zentrale Datenhaltung: Zuordnung, Zustände, abgeleitete Werte, KSEM."""
 from __future__ import annotations
 
@@ -28,6 +28,7 @@ from .const import (
     DEFAULT_KSEM_PORT,
     DEFAULT_KSEM_UNIT,
     DEFAULT_STRINGS,
+    DOMAIN,
     EXPERIMENTAL_FEATURES,
     FLUSH_DELAY,
     KEY_UNITS,
@@ -90,6 +91,11 @@ class Manager:
     def experimental_master(self) -> bool:
         return bool(self.opt(CONF_EXPERIMENTAL, False))
 
+    @property
+    def ksem_configured(self) -> bool:
+        """KSEM ist eine normale Funktion: aktiv, sobald eine Adresse eingetragen ist."""
+        return bool(str(self.opt(CONF_KSEM_HOST, "") or "").strip())
+
     def feature_active(self, feature: str) -> bool:
         """Experimentelle Funktion aktiv? Nur wenn Hauptschalter UND Einzelschalter an sind."""
         return self.experimental_master() and bool(self.opt(CONF_EXP_PREFIX + feature, False))
@@ -98,7 +104,7 @@ class Manager:
     async def async_setup(self) -> None:
         self.remap()
         self.update.async_start(self.entry)
-        if self.feature_active("ksem"):
+        if self.ksem_configured:
             self._start_ksem()
 
     def remap(self) -> None:
@@ -129,9 +135,6 @@ class Manager:
     # --- KSEM ----------------------------------------------------------
     def _start_ksem(self) -> None:
         host = str(self.opt(CONF_KSEM_HOST, "") or "").strip()
-        if not host:
-            self.ksem_error = "not_configured"
-            return
         self._ksem = KsemClient(
             host,
             int(self.opt(CONF_KSEM_PORT, DEFAULT_KSEM_PORT)),
@@ -280,11 +283,33 @@ class Manager:
             out[key] = item
         return out
 
-    def _ksem_snapshot(self) -> dict[str, Any] | None:
-        if not self.feature_active("ksem"):
+    def history_sources(self) -> dict[str, str] | None:
+        """Entitäten, aus deren Langzeitstatistik das 7-Tage-Diagramm gelesen wird (experimentell)."""
+        if not self.feature_active("history7"):
             return None
+        ent_reg = er.async_get(self.hass)
+        out: dict[str, str] = {}
+        derived = ent_reg.async_get_entity_id("sensor", DOMAIN, f"{self.entry.entry_id}_derived_solar_energy_total")
+        if derived:
+            out["solar"] = derived
+        for metric, key in (
+            ("home", "home_consumption_total"),
+            ("grid_in", "home_consumption_from_grid_total"),
+            ("grid_out", "energy_to_grid_total"),
+        ):
+            mapped = self.kostal.get(key)
+            if mapped and not mapped.disabled:
+                out[metric] = mapped.entity_id
+        if self.ksem_configured:
+            for metric, key in (("ksem_in", "energy_import"), ("ksem_out", "energy_export")):
+                eid = ent_reg.async_get_entity_id("sensor", DOMAIN, f"{self.entry.entry_id}_ksem_{key}")
+                if eid:
+                    out[metric] = eid
+        return out
+
+    def _ksem_snapshot(self) -> dict[str, Any]:
         return {
-            "configured": bool(str(self.opt(CONF_KSEM_HOST, "") or "").strip()),
+            "configured": self.ksem_configured,
             "available": self.ksem_available,
             "error": self.ksem_error,
             "values": dict(self.ksem_values) if self.ksem_available else {},
@@ -308,6 +333,7 @@ class Manager:
             "strings": self._strings_info(),
             "settings": self._settings(),
             "ksem": self._ksem_snapshot(),
+            "history": self.history_sources(),
             "experimental": {
                 "enabled": self.experimental_master(),
                 "count": len(EXPERIMENTAL_FEATURES),

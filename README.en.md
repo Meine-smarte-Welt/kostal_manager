@@ -9,7 +9,7 @@
 
 Card and sensors for the Kostal PLENTICORE plus, built on top of the **official** Home Assistant integration "Kostal Plenticore Solar Inverter". The manager does not open a second connection to the inverter. It reads the entities of the official integration, shows only sensors that deliver values, calculates solar production from the strings you choose, and adds a visual statistics category. Optionally it reads a KOSTAL Smart Energy Meter (KSEM) via Modbus TCP.
 
-> **Pre-release 1.0.0b1.** Everything was only tested against test data and simulated interfaces, nothing on a real plant. See [Known limitations](#known-limitations) and [EXPERIMENTELL.md](EXPERIMENTELL.md) (German).
+> **Pre-release 1.0.0b2.** Everything was only tested against test data and simulated interfaces, nothing on a real plant. See [Known limitations](#known-limitations) and [EXPERIMENTELL.md](EXPERIMENTELL.md) (German).
 
 This English README is a full translation of the German one (not checked by native speakers).
 
@@ -19,32 +19,38 @@ This English README is a full translation of the German one (not checked by nati
 - **Only sensors with values:** a missing value or a disabled entity is not shown. A missing value is never shown as 0.
 - **Choose strings:** in the setup dialog and in the options you decide which of the three DC inputs are PV strings and which one is the battery (default: strings 1 and 2 are PV, input 3 is the battery). The battery input never counts as PV.
 - **New sensors:** solar power of the selected strings, solar production (today, month, year, total), PV share of home consumption, grid balance.
-- **Categories (tabs):** overview with energy flow, strings, battery, statistics, KSEM (experimental), settings. Each category can be switched on and off in the editor.
+- **Categories (tabs):** overview with energy flow, strings, battery, statistics, KSEM, settings. Each category can be switched on and off in the editor. When space is tight the tab bar shows icons only, with no scrollbar.
 - **Visual statistics:** period today, month, year or total; donut "Where does the power come from?", gauges for autarky, self-consumption and PV share, bars for energy balance, production per string and battery energy.
 - **Plant settings:** minimum state of charge, minimum home consumption for discharge and battery strategy can be changed (administrators only, not in `read_only` mode).
-- **Experimental (hidden):** KSEM via Modbus TCP and an estimated battery efficiency.
+- **KSEM:** The KOSTAL Smart Energy Meter is read via Modbus TCP (read-only, its own address, not the inverter's). One address in the setup or options is enough and the *KSEM* category and the `ksem_*` sensors appear by themselves. This feature is **not** experimental, but it has not yet been verified on a real installation.
+- **Experimental (hidden):** 7-day bar chart in the statistics, own "Kostal Manager" page in the sidebar and an estimated battery efficiency.
 - Multilingual (German, English, Dutch) in setup, entities and card.
 
-## New in 1.0.0b1
+## New in 1.0.0b2
+
+New icon (sun above solar modules, green in a circle): used as the integration icon and logo in Home Assistant, in the card header (when the title is shown) and in the header bar of the sidebar page. No functional change compared with 1.0.0b1 (see version history).
+
+## Included since 1.0.0b1
 
 First release (pre-release). Everything is new.
 
 ## Images
 
-The images show **test data**, not a real plant. Version shown: 1.0.0b1.
+The images show **test data**, not a real plant. Version shown: 1.0.0b2.
 
 | | |
 |---|---|
 | ![Overview with energy flow (test data)](docs/images/karte-uebersicht.webp) | ![Statistics (test data)](docs/images/karte-statistik.webp) |
 | ![Strings (test data)](docs/images/karte-strings.webp) | ![Battery (test data)](docs/images/karte-batterie.webp) |
-| ![KSEM, experimental (test data)](docs/images/karte-ksem.webp) | ![Settings (test data)](docs/images/karte-einstellungen.webp) |
+| ![KSEM (test data)](docs/images/karte-ksem.webp) | ![Settings (test data)](docs/images/karte-einstellungen.webp) |
+| ![7-day chart, experimental (test data)](docs/images/karte-7tage.webp) | ![Narrow card with icon tabs (test data)](docs/images/karte-schmal.webp) |
 
 ## Requirements
 
 - Home Assistant 2025.6 or newer (tested only with 2026.2.3).
 - The official **Kostal Plenticore Solar Inverter** integration is set up.
 - The sensors you want to see are enabled. The official integration leaves most sensors disabled. The manager can enable them with one button (Settings tab, administrators only).
-- Optional for KSEM: Modbus TCP enabled on the KSEM (port 502, unencrypted).
+- Optional for KSEM: Modbus TCP enabled on the KSEM (port 502, unencrypted). The KSEM has its own IP address.
 
 ## Installation
 
@@ -59,10 +65,11 @@ Then reload the browser (Ctrl+F5). The card resource is registered automatically
 1. Settings → Devices & services → Add integration → **Kostal Manager**.
 2. If there are several Kostal entries, pick the right one.
 3. Choose the PV strings and the battery input.
-4. Add the card: edit dashboard → add card → **Kostal Manager**.
-5. If the card says "No values yet", open the *Settings* tab and enable the disabled sensors.
+4. Optional: enter the address of your KSEM (leave empty if you have none). Port, unit ID and interval can be changed later in the options.
+5. Add the card: edit dashboard → add card → **Kostal Manager**.
+6. If the card says "No values yet", open the *Settings* tab and enable the disabled sensors.
 
-Options (gear of the integration): change strings, then the "Experimental features" dialog.
+Options (gear of the integration): change strings, then KSEM (address, port, unit ID, interval), then the "Experimental features" dialog with the master switch and the switches for efficiency, 7-day chart and sidebar page.
 
 ## The card
 
@@ -88,7 +95,7 @@ More examples are in `examples/`. All keys:
 | `read_only` | `false` | Hides all controls |
 | `show_experimental` | `false` | Shows experimental features (the master switch in the options must also be on) |
 
-The *KSEM* tab only appears when the master switch "Show experimental features" in the options, the KSEM switch **and** `show_experimental` in the card are all on.
+The *KSEM* tab is always visible. Without a KSEM address it explains what to enter. The 7-day chart in the statistics only appears when the master switch "Show experimental features", the "7-day bar chart" switch **and** `show_experimental` in the card are all on. It reads the Home Assistant long-term statistics (recorder) and needs enabled energy counters of the Kostal integration.
 
 ## Colors
 
@@ -119,7 +126,7 @@ No Home Assistant events are fired. The Settings tab keeps a log of actions sinc
 | PV share of home consumption today / total | % | Consumption from solar divided by home consumption |
 | Grid balance today (feed-in minus import) | kWh | |
 | Battery efficiency (estimated) | % | experimental |
-| `ksem_*`: grid power, frequency, per phase voltage, current, power, import and export counter | W, Hz, V, A, kWh | experimental |
+| `ksem_*`: grid power, frequency, per phase voltage, current, power, import and export counter (only with a KSEM address) | W, Hz, V, A, kWh | unverified |
 
 If an input value is missing, the sensor is "unavailable" instead of 0. The value called "Energy Yield" in the official integration is **not** solar production; the manager therefore calculates it from the strings.
 
@@ -144,6 +151,7 @@ The *Settings* tab (gear) contains: app version, connection (found and disabled 
 - The assignment of Kostal entities uses normalized names (e.g. `dc1_power`, `battery_soc`). Whether this hits every sensor on your installation and language is untested. If the manager does not find a sensor, it is not shown.
 - The official integration reads settings only about every 5 minutes.
 - Whether enabling disabled sensors reloads the Kostal integration by itself is untested. Otherwise reload it from its menu.
+- The sidebar page (experimental) shows the same card as a full page. It appears after the integration reloads (saving the options reloads it) and is visible to all users; changes stay reserved for administrators.
 - KSEM: port 502 without TLS only, the unit ID is unclear (default 1), only documented registers are read.
 - The GitHub repository is a proposal (`Meine-smarte-Welt/kostal_manager`). While it does not exist, the update check reports "Check not possible".
 - The translations (German, English, Dutch) were not checked by native speakers.
@@ -153,7 +161,8 @@ The *Settings* tab (gear) contains: app version, connection (found and disabled 
 
 - **"No values yet":** sensors of the Kostal integration are disabled. *Settings* tab → "Enable disabled sensors", then wait a few seconds.
 - **Unknown card:** clear the browser cache (Ctrl+F5); in YAML mode add the resource by hand.
-- **KSEM tab missing:** check master switch, KSEM switch and `show_experimental`.
+- **KSEM asks for an address:** enter the KSEM address in the integration options (Modbus TCP must be enabled on the KSEM).
+- **7-day chart missing:** check the master switch, the "7-day bar chart" switch and `show_experimental`. It needs enabled energy counters and the Home Assistant long-term statistics.
 - **KSEM "modbus_exception_…":** try another unit ID in the options.
 - **Diagnostics:** Settings → Devices & services → Kostal Manager → download diagnostics (without addresses and entity IDs).
 
@@ -161,7 +170,8 @@ The *Settings* tab (gear) contains: app version, connection (found and disabled 
 
 | Version | Change |
 |---|---|
-| **1.0.0b1** | First release (pre-release): assignment of Kostal entities, string selection, card with overview, strings, battery, statistics, settings; experimental: KSEM via Modbus, estimated battery efficiency. |
+| **1.0.0b2** | New icon for integration (`brand/`), card and sidebar page. No functional change. |
+| **1.0.0b1** | First release (pre-release): assignment of Kostal entities, string selection, card with overview, strings, battery, statistics, settings; KSEM via Modbus (not experimental, unverified), tab bar without scrollbar; experimental: 7-day bar chart, sidebar page, estimated battery efficiency. |
 
 ## File integrity
 
@@ -170,12 +180,12 @@ The `.py`, `.js` and `.yaml` files carry their SHA-256 checksum in line 1 (conte
 | Datei | SHA-256 |
 |---|---|
 | `hacs.json` | `d448c6dd7a98d8741a9fdcf500def761d4824c3b18c4a269246616f0c4f27a79` |
-| `custom_components/kostal_manager/manifest.json` | `3126768f118b269b2c50fd97e6779f7509b0d35964d0413f0be03395b42a39b3` |
-| `custom_components/kostal_manager/strings.json` | `6b47d0e918e0110fb7d8dbd1ba608520570d38ae04465f97fe37acbd7c29cf08` |
+| `custom_components/kostal_manager/manifest.json` | `811222af9eb0e482e45687fc282aeaeee3c654d28ab358fd8bf7540135780130` |
+| `custom_components/kostal_manager/strings.json` | `549d1a52d3368de1cb990be2077823a79f4fd5e4842843b85061f07190f8be18` |
 | `custom_components/kostal_manager/icons.json` | `ec9720e4d2be322a2f1a8cd5485d2360bc97dce15ef0f896686b679507b9427e` |
-| `custom_components/kostal_manager/translations/de.json` | `6b47d0e918e0110fb7d8dbd1ba608520570d38ae04465f97fe37acbd7c29cf08` |
-| `custom_components/kostal_manager/translations/en.json` | `220faf916ae077c5a38868f1bad61ca7d416507ce2285b4ef5ef67119d7d6606` |
-| `custom_components/kostal_manager/translations/nl.json` | `87f97c1e204846ca305c0cacc5f35b3c76023bb9dd49101090cad10c1e070ba7` |
+| `custom_components/kostal_manager/translations/de.json` | `549d1a52d3368de1cb990be2077823a79f4fd5e4842843b85061f07190f8be18` |
+| `custom_components/kostal_manager/translations/en.json` | `53b1a31c1528df133490c50fa590c8d23d017243109ad3efd8431278143b23ff` |
+| `custom_components/kostal_manager/translations/nl.json` | `f6342c536164780c12efbb15936d4d3d724928a36e7ae6f114bc738c679f691d` |
 
 ## License
 

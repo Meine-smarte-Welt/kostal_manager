@@ -1,6 +1,8 @@
-// SHA256 (Inhalt ab Zeile 2, d.h. dieser Datei ohne diese erste Zeile): bcce48f7cea1239fb9025953c2b8bcec0c8fc3cb065b4f861de03b0cf0ea0554
+// SHA256 (Inhalt ab Zeile 2, d.h. dieser Datei ohne diese erste Zeile): 826ab92938f9c3198f96fc9aff1de4880d5a6197e8e705c6c516c4b45b7e5779
 /* Kostal Manager Card – Meine smarte Welt */
-const CARD_VERSION = "1.0.0b1";
+const CARD_VERSION = "1.0.0b2";
+/* Symbol wird wie die Karte aus dem Ordner /kostal_manager_files/ ausgeliefert (const.py: URL_BASE) */
+const ICON_URL = "/kostal_manager_files/kostal-manager-icon.png";
 const CARD_TAG = "kostal-manager-card";
 const EDITOR_TAG = "kostal-manager-card-editor";
 const WS = "kostal_manager";
@@ -13,13 +15,14 @@ const TAB_META = {
   strings: { icon: "mdi:solar-panel-large", label: "tab_strings" },
   battery: { icon: "mdi:battery-70", label: "tab_battery" },
   stats: { icon: "mdi:chart-donut", label: "tab_stats" },
-  ksem: { icon: "mdi:meter-electric", label: "tab_ksem", experimental: "ksem" },
+  ksem: { icon: "mdi:meter-electric", label: "tab_ksem" },
   settings: { icon: "mdi:cog", label: "tab_settings" },
 };
 /* Experimentelle Funktionen – schlüsselgleich zu const.py (EXPERIMENTAL_FEATURES) */
 const EXPERIMENTAL = {
-  ksem: { since: "1.0.0b1", icon: "mdi:meter-electric", label: "exp_ksem" },
   efficiency: { since: "1.0.0b1", icon: "mdi:percent-circle", label: "exp_efficiency" },
+  history7: { since: "1.0.0b1", icon: "mdi:chart-bar", label: "exp_history7" },
+  panel: { since: "1.0.0b1", icon: "mdi:view-dashboard", label: "exp_panel" },
 };
 const CATEGORY_ICON_COLOR_KEYS = Object.fromEntries(TAB_ORDER.map((k) => [k, `color_icon_${k}`]));
 
@@ -48,7 +51,9 @@ const I18N = {
   de: {
     tab_overview: "Übersicht", tab_strings: "Strings", tab_battery: "Batterie", tab_stats: "Statistik",
     tab_ksem: "KSEM", tab_settings: "Einstellungen",
-    exp_ksem: "KSEM über Modbus", exp_efficiency: "Batteriewirkungsgrad (geschätzt)",
+    exp_efficiency: "Batteriewirkungsgrad (geschätzt)", exp_history7: "7-Tage-Balkendiagramm", exp_panel: "Eigene Seite in der Seitenleiste",
+    h7_title: "Letzte 7 Tage", h7_none: "Für das Diagramm fehlen Energiezähler. Aktiviere die Kostal-Sensoren (Einstellungen).", h7_empty: "Noch keine Verlaufsdaten für diesen Wert.", h7_loading: "Lade Verlauf …", h7_error: "Verlauf konnte nicht geladen werden.",
+    h7_solar: "Solar", h7_home: "Verbrauch", h7_grid_in: "Netzbezug", h7_grid_out: "Einspeisung", h7_ksem_in: "KSEM Bezug", h7_ksem_out: "KSEM Einspeisung", h7_sum: "Summe", h7_avg: "Ø pro Tag",
     experimental: "Experimentell", experimental_hint: "Ungeprüft. Noch nicht an echter Hardware bestätigt.",
     loading: "Lade Daten …", err_not_found: "Kostal Manager ist nicht eingerichtet.", err_conn: "Keine Verbindung zum Backend.",
     no_data: "Noch keine Werte. Die Sensoren der Kostal-Integration sind meist deaktiviert.",
@@ -69,7 +74,7 @@ const I18N = {
     st_chg_pv: "Geladen aus Solar", st_chg_grid: "Geladen aus Netz", st_discharge: "Entladen",
     st_efficiency: "Wirkungsgrad (geschätzt)", st_efficiency_hint: "Entladen geteilt durch Geladen seit Beginn. Näherungswert.",
     bat_power: "Batterieleistung",
-    ksem_title: "KSEM Zähler", ksem_need_host: "Trage in den Optionen (Experimentell) die Adresse des KSEM ein und aktiviere Modbus TCP am Gerät.",
+    ksem_title: "KSEM Zähler", ksem_need_host: "Trage in den Optionen der Integration die Adresse des KSEM ein und aktiviere Modbus TCP am Gerät.",
     ksem_error: "Verbindung zum KSEM fehlgeschlagen", ksem_power: "Netzleistung", ksem_freq: "Netzfrequenz", ksem_phase: "Phase {n}",
     ksem_import: "Zähler Bezug", ksem_export: "Zähler Einspeisung", ksem_wait: "Warte auf erste Messung …",
     app_version: "App-Version", integration: "Integration", card: "Karte", latest: "Neueste Version", checked: "Zuletzt geprüft",
@@ -88,7 +93,9 @@ const I18N = {
   en: {
     tab_overview: "Overview", tab_strings: "Strings", tab_battery: "Battery", tab_stats: "Statistics",
     tab_ksem: "KSEM", tab_settings: "Settings",
-    exp_ksem: "KSEM via Modbus", exp_efficiency: "Battery efficiency (estimated)",
+    exp_efficiency: "Battery efficiency (estimated)", exp_history7: "7-day bar chart", exp_panel: "Own page in the sidebar",
+    h7_title: "Last 7 days", h7_none: "The chart needs energy counters. Enable the Kostal sensors (Settings).", h7_empty: "No history yet for this value.", h7_loading: "Loading history …", h7_error: "History could not be loaded.",
+    h7_solar: "Solar", h7_home: "Consumption", h7_grid_in: "Grid import", h7_grid_out: "Feed-in", h7_ksem_in: "KSEM import", h7_ksem_out: "KSEM feed-in", h7_sum: "Total", h7_avg: "Avg. per day",
     experimental: "Experimental", experimental_hint: "Untested. Not yet confirmed on real hardware.",
     loading: "Loading data …", err_not_found: "Kostal Manager is not set up.", err_conn: "No connection to the backend.",
     no_data: "No values yet. The sensors of the Kostal integration are usually disabled.",
@@ -109,7 +116,7 @@ const I18N = {
     st_chg_pv: "Charged from solar", st_chg_grid: "Charged from grid", st_discharge: "Discharged",
     st_efficiency: "Efficiency (estimated)", st_efficiency_hint: "Discharged divided by charged since the start. Approximation.",
     bat_power: "Battery power",
-    ksem_title: "KSEM meter", ksem_need_host: "Enter the KSEM address in the options (Experimental) and enable Modbus TCP on the device.",
+    ksem_title: "KSEM meter", ksem_need_host: "Enter the KSEM address in the integration options and enable Modbus TCP on the device.",
     ksem_error: "Connection to the KSEM failed", ksem_power: "Grid power", ksem_freq: "Grid frequency", ksem_phase: "Phase {n}",
     ksem_import: "Import counter", ksem_export: "Export counter", ksem_wait: "Waiting for first reading …",
     app_version: "App version", integration: "Integration", card: "Card", latest: "Latest version", checked: "Last checked",
@@ -128,7 +135,9 @@ const I18N = {
   nl: {
     tab_overview: "Overzicht", tab_strings: "Strings", tab_battery: "Batterij", tab_stats: "Statistiek",
     tab_ksem: "KSEM", tab_settings: "Instellingen",
-    exp_ksem: "KSEM via Modbus", exp_efficiency: "Batterijrendement (geschat)",
+    exp_efficiency: "Batterijrendement (geschat)", exp_history7: "Staafdiagram van 7 dagen", exp_panel: "Eigen pagina in de zijbalk",
+    h7_title: "Laatste 7 dagen", h7_none: "Voor het diagram ontbreken energietellers. Schakel de Kostal-sensoren in (Instellingen).", h7_empty: "Nog geen verloop voor deze waarde.", h7_loading: "Verloop laden …", h7_error: "Verloop kon niet worden geladen.",
+    h7_solar: "Zon", h7_home: "Verbruik", h7_grid_in: "Netafname", h7_grid_out: "Teruglevering", h7_ksem_in: "KSEM afname", h7_ksem_out: "KSEM teruglevering", h7_sum: "Totaal", h7_avg: "Gem. per dag",
     experimental: "Experimenteel", experimental_hint: "Niet getest. Nog niet bevestigd op echte hardware.",
     loading: "Gegevens laden …", err_not_found: "Kostal Manager is niet ingesteld.", err_conn: "Geen verbinding met de backend.",
     no_data: "Nog geen waarden. De sensoren van de Kostal-integratie zijn meestal uitgeschakeld.",
@@ -149,7 +158,7 @@ const I18N = {
     st_chg_pv: "Geladen uit zon", st_chg_grid: "Geladen uit net", st_discharge: "Ontladen",
     st_efficiency: "Rendement (geschat)", st_efficiency_hint: "Ontladen gedeeld door geladen sinds het begin. Benadering.",
     bat_power: "Batterijvermogen",
-    ksem_title: "KSEM-meter", ksem_need_host: "Voer in de opties (Experimenteel) het KSEM-adres in en schakel Modbus TCP op het apparaat in.",
+    ksem_title: "KSEM-meter", ksem_need_host: "Voer in de opties van de integratie het KSEM-adres in en schakel Modbus TCP op het apparaat in.",
     ksem_error: "Verbinding met de KSEM mislukt", ksem_power: "Netvermogen", ksem_freq: "Netfrequentie", ksem_phase: "Fase {n}",
     ksem_import: "Teller afname", ksem_export: "Teller teruglevering", ksem_wait: "Wachten op eerste meting …",
     app_version: "App-versie", integration: "Integratie", card: "Kaart", latest: "Nieuwste versie", checked: "Laatst gecontroleerd",
@@ -189,7 +198,7 @@ function num(o) {
 }
 
 const DEFAULTS = {
-  title: "Plenticore",
+  title: "Kostal Manager",
   show_title: true,
   default_tab: "overview",
   zoom: 100,
@@ -203,14 +212,27 @@ const STYLE = `
 :host { display:block; container-type:inline-size; container-name:plm; --plm-radius:8px; }
 * { box-sizing:border-box; }
 ha-card { padding:12px; overflow:hidden; }
-.title { font-size:1.2em; font-weight:500; margin:0 0 8px; }
+.title { font-size:1.2em; font-weight:500; margin:0 0 8px; display:flex; align-items:center; gap:8px; }
+.title img { width:1.6em; height:1.6em; flex:none; }
 .zoomwrap { transform-origin:top left; }
-.tabs { display:flex; gap:4px; border-bottom:1px solid var(--divider-color); margin-bottom:12px; overflow-x:auto; }
-.tab { display:flex; align-items:center; gap:6px; padding:8px 10px; cursor:pointer; border:0; background:none; color:var(--secondary-text-color); font:inherit; border-bottom:2px solid transparent; white-space:nowrap; position:relative; }
+.tabs { display:flex; gap:2px; border-bottom:1px solid var(--divider-color); margin-bottom:12px; overflow:hidden; }
+.tab { flex:0 1 auto; display:flex; align-items:center; gap:6px; padding:8px 10px; cursor:pointer; border:0; background:none; color:var(--secondary-text-color); font:inherit; border-bottom:2px solid transparent; white-space:nowrap; position:relative; }
 .tab ha-icon { --mdc-icon-size:20px; color:var(--plm-icon, var(--plm-color-row-icon, var(--secondary-text-color))); }
 .tab.active { color:var(--primary-text-color); border-bottom-color:var(--plm-color-tab-active, var(--primary-color, #03a9f4)); }
 .tab .badge { position:absolute; top:2px; right:0; min-width:14px; height:14px; border-radius:7px; font-size:10px; line-height:14px; text-align:center; color:#fff; background:var(--plm-color-warning, var(--warning-color,#ff9800)); padding:0 3px; }
-@container plm (max-width: 480px) { .tab span.lbl { display:none; } }
+@container plm (max-width: 480px) { .tab span.lbl { display:none; } .tab { flex:1 1 0; min-width:0; justify-content:center; padding:8px 4px; } }
+.tabs.compact .tab span.lbl { display:none; }
+.tabs.compact .tab { flex:1 1 0; min-width:0; justify-content:center; padding:8px 4px; }
+.seg.wrap { display:flex; flex-wrap:wrap; }
+.h7 { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:6px; height:160px; margin-bottom:8px; }
+.h7col { display:flex; flex-direction:column; min-width:0; }
+.h7val { font-size:.75em; color:var(--secondary-text-color); height:1.3em; text-align:center; white-space:nowrap; }
+.h7bar { position:relative; flex:1; }
+.h7bar i { position:absolute; bottom:0; left:12%; right:12%; background:var(--c); opacity:.55; border-radius:6px 6px 0 0; min-height:2px; }
+.h7col.today .h7bar i { opacity:1; }
+.h7day { font-size:.75em; margin-top:4px; text-align:center; color:var(--secondary-text-color); }
+.h7col.today .h7day { color:var(--primary-text-color); font-weight:500; }
+@container plm (max-width: 360px) { .h7val { font-size:.65em; } }
 .banner { padding:8px 10px; border-radius:var(--plm-radius); margin-bottom:10px; color:#fff; font-size:.9em; }
 .banner.error { background:var(--plm-color-error, var(--error-color,#db4437)); }
 .banner.warning { background:var(--plm-color-warning, var(--warning-color,#ff9800)); }
@@ -333,8 +355,25 @@ class PlenticoreManagerCard extends HTMLElement {
     if (lang !== this._lang) { this._lang = lang; this._sig = ""; this._render(); }
   }
 
-  connectedCallback() { if (this._hass && !this._unsub) this._connect(); }
-  disconnectedCallback() { this._disconnect(); }
+  connectedCallback() {
+    if (this._hass && !this._unsub) this._connect();
+    if (typeof ResizeObserver !== "undefined" && !this._ro) {
+      this._ro = new ResizeObserver(() => this._fitTabs());
+      this._ro.observe(this);
+    }
+  }
+  disconnectedCallback() {
+    this._disconnect();
+    if (this._ro) { this._ro.disconnect(); this._ro = null; }
+  }
+
+  /* Tab-Leiste ohne Scrollbalken: passen die Beschriftungen nicht, bleiben nur die Symbole */
+  _fitTabs() {
+    const t = this.shadowRoot && this.shadowRoot.querySelector(".tabs");
+    if (!t) return;
+    t.classList.remove("compact");
+    if (t.scrollWidth > t.clientWidth + 1) t.classList.add("compact");
+  }
 
   _disconnect() {
     if (this._unsub) { try { this._unsub(); } catch (e) { /* ignorieren */ } this._unsub = null; }
@@ -404,7 +443,7 @@ class PlenticoreManagerCard extends HTMLElement {
     if (!this.shadowRoot) return;
     const tabs = this._visibleTabs();
     const tab = this._currentTab(tabs);
-    const sig = JSON.stringify([this._snap, this._err, tab, this._popup, this._confirm, this._period, this._lang, this._toast, this._events.length, this._config]);
+    const sig = JSON.stringify([this._snap, this._err, tab, this._popup, this._confirm, this._period, this._lang, this._toast, this._events.length, this._config, this._hist, this._histMetric]);
     if (sig === this._sig) return;
     this._sig = sig;
     const keep = this._captureUi();
@@ -419,11 +458,12 @@ class PlenticoreManagerCard extends HTMLElement {
       const badge = k === "settings" && upd ? `<span class="badge">↑</span>` : "";
       return `<button class="tab ${k === tab ? "active" : ""}" data-tab="${k}" title="${esc(this._t(m.label))}" style="${this._config[CATEGORY_ICON_COLOR_KEYS[k]] ? "" : ""}--plm-icon:var(--plm-icon-${k}, var(--plm-color-row-icon, var(--secondary-text-color)))"><ha-icon icon="${m.icon}"></ha-icon><span class="lbl">${esc(this._t(m.label))}</span>${badge}</button>`;
     }).join("")}</div>` : "";
-    const title = this._config.show_title !== false && this._config.title ? `<div class="title">${esc(this._config.title)}</div>` : "";
+    const title = this._config.show_title !== false && this._config.title ? `<div class="title"><img src="${ICON_URL}" alt="">${esc(this._config.title)}</div>` : "";
     const zoom = Math.min(150, Math.max(50, Number(this._config.zoom) || 100));
     const zs = zoom !== 100 ? `style="transform:scale(${zoom / 100});width:${10000 / zoom}%"` : "";
     this.shadowRoot.innerHTML = `<style>${STYLE}</style><ha-card><div class="zoomwrap" ${zs}>${title}${tabsHtml}<div class="content">${body}</div></div></ha-card>${this._popupHtml()}${this._toast ? `<div class="toast ${this._toast.error ? "error" : ""}">${esc(this._toast.text)}</div>` : ""}`;
     this._bind();
+    this._fitTabs();
     this._restoreUi(keep);
   }
 
@@ -600,13 +640,71 @@ class PlenticoreManagerCard extends HTMLElement {
       const mx = Math.max(...bb.map((x) => x[1]), 0);
       cards.push(`<div class="card2"><h4><ha-icon icon="mdi:battery-charging"></ha-icon>${esc(this._t("st_battery"))}</h4>${bb.map((x) => this._hbar(x[0], x[1], mx, x[2])).join("")}${eff !== null && eff !== undefined ? `<div class="section-title" style="margin-top:8px">${esc(this._t("st_efficiency"))}${this._expBadge()}</div><div class="settings-line"><span class="l">${esc(this._t("st_efficiency_hint"))}</span><span class="r">${esc(this._fmt(eff, "%"))}</span></div>` : ""}</div>`);
     }
-    return `${seg}${cards.length ? cards.join("") : `<div class="hint">${esc(this._t("no_data"))}</div>${this._enableBtn()}`}`;
+    const chart = this._expOn("history7") ? this._histChart() : "";
+    return `${seg}${cards.length ? cards.join("") : `<div class="hint">${esc(this._t("no_data"))}</div>${this._enableBtn()}`}${chart}`;
+  }
+
+  /* ---------- 7-Tage-Diagramm (experimentell) ---------- */
+  _histFetch() {
+    const src = this._snap && this._snap.history;
+    const ids = src ? Object.values(src) : [];
+    if (!ids.length || !this._hass || typeof this._hass.callWS !== "function") return;
+    const key = ids.join(",");
+    const h = this._hist;
+    if (h && h.key === key && (h.loading || Date.now() - h.ts < 300000)) return;
+    const start = new Date(); start.setHours(0, 0, 0, 0); start.setDate(start.getDate() - 6);
+    this._hist = { key, loading: true, ts: Date.now(), data: h && h.key === key ? h.data : null, error: false };
+    this._hass.callWS({ type: "recorder/statistics_during_period", start_time: start.toISOString(), statistic_ids: ids, period: "day", types: ["change"], units: { energy: "kWh" } })
+      .then((res) => { this._hist = { key, loading: false, ts: Date.now(), data: this._histBuild(res, src, start), error: false }; this._render(); })
+      .catch(() => { this._hist = { key, loading: false, ts: Date.now(), data: null, error: true }; this._render(); });
+  }
+  _histBuild(res, src, start) {
+    const days = [];
+    for (let i = 0; i < 7; i++) { const d = new Date(start); d.setDate(start.getDate() + i); days.push(d.getTime()); }
+    const series = {};
+    for (const [metric, id] of Object.entries(src)) {
+      const perDay = new Map();
+      for (const r of (res && res[id]) || []) {
+        const d = new Date(r.start); d.setHours(0, 0, 0, 0);
+        if (typeof r.change === "number" && Number.isFinite(r.change)) perDay.set(d.getTime(), r.change);
+      }
+      series[metric] = days.map((t) => (perDay.has(t) ? perDay.get(t) : null));
+    }
+    return { days, series };
+  }
+  _histChart() {
+    const src = this._snap.history, h = this._hist;
+    const head = `<div class="section-title"><ha-icon icon="mdi:chart-bar"></ha-icon>${esc(this._t("h7_title"))}${this._expBadge()}</div>`;
+    const order = ["solar", "home", "grid_in", "grid_out", "ksem_in", "ksem_out"];
+    const avail = order.filter((m) => src && src[m]);
+    if (!avail.length) return `${head}<div class="hint">${esc(this._t("h7_none"))}</div>`;
+    this._histFetch();
+    const metric = avail.includes(this._histMetric) ? this._histMetric : avail[0];
+    const chips = avail.length > 1 ? `<div class="seg wrap">${avail.map((m) => `<button data-hmetric="${m}" class="${m === metric ? "on" : ""}">${esc(this._t("h7_" + m))}</button>`).join("")}</div>` : "";
+    const cur = this._hist;
+    if (!cur || (cur.loading && !cur.data)) return `${head}${chips}<div class="hint">${esc(this._t("h7_loading"))}</div>`;
+    if (cur.error || !cur.data) return `${head}${chips}<div class="hint">${esc(this._t("h7_error"))}</div>`;
+    const vals = cur.data.series[metric] || [];
+    const real = vals.filter((v) => v !== null);
+    if (!real.length) return `${head}${chips}<div class="hint">${esc(this._t("h7_empty"))}</div>`;
+    const mx = Math.max(...real, 0.001);
+    const col = { solar: this._col("solar"), home: this._col("home"), grid_in: this._col("grid"), grid_out: this._col("success"), ksem_in: this._col("grid"), ksem_out: this._col("success") }[metric];
+    let dayFmt;
+    try { dayFmt = new Intl.DateTimeFormat(this._lang && this._lang.startsWith("sr") ? "en" : (this._lang || "en"), { weekday: "short" }); } catch (e) { dayFmt = new Intl.DateTimeFormat("en", { weekday: "short" }); }
+    const bars = vals.map((v, i) => {
+      const wd = dayFmt.format(new Date(cur.data.days[i]));
+      const pct = v === null ? 0 : Math.max(2, (v / mx) * 100);
+      const label = v === null ? "–" : this._n(v, Math.abs(v) >= 100 ? 0 : 1);
+      return `<div class="h7col ${i === 6 ? "today" : ""}" title="${esc(wd)}: ${esc(v === null ? "–" : this._fmt(v, "kWh"))}"><div class="h7val">${esc(label)}</div><div class="h7bar">${v === null ? "" : `<i style="height:${pct}%;--c:${col}"></i>`}</div><div class="h7day">${esc(wd)}</div></div>`;
+    }).join("");
+    const sum = real.reduce((a, b) => a + b, 0);
+    return `${head}${chips}<div class="card2"><div class="h7">${bars}</div>${this._line(this._t("h7_sum"), esc(this._fmt(sum, "kWh")))}${this._line(this._t("h7_avg"), esc(this._fmt(sum / real.length, "kWh")))}</div>`;
   }
 
   /* ---------- KSEM (experimentell) ---------- */
   _tabKsem() {
     const k = this._snap.ksem;
-    const head = `<div class="section-title"><ha-icon icon="mdi:meter-electric"></ha-icon>${esc(this._t("ksem_title"))}${this._expBadge()}</div>`;
+    const head = `<div class="section-title"><ha-icon icon="mdi:meter-electric"></ha-icon>${esc(this._t("ksem_title"))}</div>`;
     if (!k || !k.configured) return `${head}<div class="hint">${esc(this._t("ksem_need_host"))}</div>`;
     if (k.error && !k.available) return `${head}<div class="banner error">${esc(this._t("ksem_error"))}: ${esc(k.error)}</div>`;
     const val = k.values || {};
@@ -697,6 +795,7 @@ class PlenticoreManagerCard extends HTMLElement {
   _bind() {
     const root = this.shadowRoot;
     root.querySelectorAll("[data-tab]").forEach((el) => el.addEventListener("click", () => { this._tab = el.dataset.tab; this._confirm = null; this._render(); }));
+    root.querySelectorAll("[data-hmetric]").forEach((el) => el.addEventListener("click", () => { this._histMetric = el.dataset.hmetric; this._render(); }));
     root.querySelectorAll("[data-period]").forEach((el) => el.addEventListener("click", () => { this._period = el.dataset.period; this._render(); }));
     root.querySelectorAll("details[data-k]").forEach((el) => el.addEventListener("toggle", () => { this._acc[el.dataset.k] = el.open; }));
     root.querySelectorAll("[data-pop]").forEach((el) => {

@@ -1,4 +1,4 @@
-# SHA256 (Inhalt ab Zeile 2, d.h. dieser Datei ohne diese erste Zeile): bc5656aed0e95b241eea4218487968c92786b69346ffe2818a3f13d1c147cced
+# SHA256 (Inhalt ab Zeile 2, d.h. dieser Datei ohne diese erste Zeile): 221fb136eab414404f73d164b92028e0a982a014f92f8bdcfb4d4895095cc0cb
 """Kostal Manager: Karte und abgeleitete Sensoren auf Basis der offiziellen Kostal-Integration."""
 from __future__ import annotations
 
@@ -9,7 +9,7 @@ from homeassistant.components.http import StaticPathConfig
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 
-from .const import CARD_FILE, DOMAIN, URL_BASE, VERSION
+from .const import CARD_FILE, DOMAIN, PANEL_ELEMENT, PANEL_FILE, PANEL_URL_PATH, URL_BASE, VERSION
 from .manager import Manager
 
 _LOGGER = logging.getLogger(__name__)
@@ -48,6 +48,45 @@ async def _register_card(hass: HomeAssistant) -> None:
         _LOGGER.warning("Lovelace-Ressource konnte nicht eingetragen werden, bitte manuell: %s", url)
 
 
+async def _register_panel(hass: HomeAssistant, entry: PlentiConfigEntry) -> None:
+    """Eigene Seite in der Seitenleiste (experimentelle Funktion „panel“)."""
+    panels: set[str] = hass.data.setdefault(f"{DOMAIN}_panels", set())
+    if panels:
+        panels.add(entry.entry_id)
+        return
+    try:
+        from homeassistant.components import panel_custom
+
+        await panel_custom.async_register_panel(
+            hass,
+            webcomponent_name=PANEL_ELEMENT,
+            frontend_url_path=PANEL_URL_PATH,
+            module_url=f"{URL_BASE}/{PANEL_FILE}?v={VERSION}",
+            sidebar_title="Kostal Manager",
+            sidebar_icon="mdi:solar-power-variant",
+            require_admin=False,
+            embed_iframe=False,
+        )
+        panels.add(entry.entry_id)
+    except Exception:  # noqa: BLE001 - die Seite ist Komfort, nie Setup-Abbruch
+        _LOGGER.warning("Seitenleisten-Seite konnte nicht registriert werden", exc_info=True)
+
+
+def _remove_panel(hass: HomeAssistant, entry: PlentiConfigEntry) -> None:
+    panels: set[str] = hass.data.get(f"{DOMAIN}_panels", set())
+    if entry.entry_id not in panels:
+        return
+    panels.discard(entry.entry_id)
+    if panels:
+        return
+    try:
+        from homeassistant.components import frontend
+
+        frontend.async_remove_panel(hass, PANEL_URL_PATH)
+    except Exception:  # noqa: BLE001
+        _LOGGER.debug("Seitenleisten-Seite war schon entfernt")
+
+
 async def async_setup_entry(hass: HomeAssistant, entry: PlentiConfigEntry) -> bool:
     from . import websocket_api
 
@@ -60,6 +99,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: PlentiConfigEntry) -> bo
     entry.runtime_data = manager
     websocket_api.async_register(hass)
     await _register_card(hass)
+    if manager.feature_active("panel"):
+        await _register_panel(hass, entry)
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     entry.async_on_unload(entry.add_update_listener(_options_updated))
     return True
@@ -72,6 +113,7 @@ async def _options_updated(hass: HomeAssistant, entry: PlentiConfigEntry) -> Non
 async def async_unload_entry(hass: HomeAssistant, entry: PlentiConfigEntry) -> bool:
     ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
     if ok:
+        _remove_panel(hass, entry)
         await entry.runtime_data.async_shutdown()
     return ok
 

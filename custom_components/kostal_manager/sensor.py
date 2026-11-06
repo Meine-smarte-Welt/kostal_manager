@@ -1,4 +1,4 @@
-# SHA256 (Inhalt ab Zeile 2, d.h. dieser Datei ohne diese erste Zeile): 9cecf8cc866b6db76ec71bb6934354988b20936330fd9956d1813ee46247d960
+# SHA256 (Inhalt ab Zeile 2, d.h. dieser Datei ohne diese erste Zeile): 8cd6a58a98789da00a64bb8a6964247d47fff2089b178751d4d5b2b96b9bd1a0
 """Abgeleitete Sensoren (und optional KSEM-Messwerte)."""
 from __future__ import annotations
 
@@ -66,7 +66,10 @@ async def async_setup_entry(
     entities: list[PlentiSensor] = []
     for spec in DERIVED + KSEM:
         feature = spec[6]
-        if feature is not None and not manager.feature_active(feature):
+        if feature == "ksem":
+            if not manager.ksem_configured:
+                continue
+        elif feature is not None and not manager.feature_active(feature):
             continue
         entities.append(PlentiSensor(manager, entry, spec))
     async_add_entities(entities)

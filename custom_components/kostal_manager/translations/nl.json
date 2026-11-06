@@ -2,7 +2,7 @@
   "config": {
     "step": {
       "user": {
-        "title": "Plenticore Manager",
+        "title": "Kostal Manager",
         "description": "Kies de Kostal Plenticore-configuratie waarop de manager voortbouwt.",
         "data": {
           "kostal_entry_id": "Kostal Plenticore-configuratie"
@@ -14,6 +14,16 @@
         "data": {
           "strings": "PV-strings",
           "battery_input": "Batterij-ingang"
+        }
+      },
+      "ksem": {
+        "title": "KSEM (optioneel)",
+        "description": "De KSEM heeft een eigen adres, niet dat van de omvormer. Schakel Modbus TCP in op de KSEM (poort 502, zonder TLS). Laat het adres leeg als je geen KSEM hebt.",
+        "data": {
+          "ksem_host": "KSEM-adres (IP of hostnaam)",
+          "ksem_port": "KSEM Modbus-poort (onversleuteld: 502)",
+          "ksem_unit": "KSEM Modbus-unit-ID",
+          "ksem_interval": "KSEM-pollinginterval"
         }
       }
     },
@@ -32,22 +42,26 @@
           "battery_input": "Batterij-ingang"
         }
       },
-      "experimental": {
-        "title": "Experimentele functies",
-        "description": "Deze functies zijn niet getest en standaard uit. Ze verschijnen alleen als de hoofdschakelaar en de afzonderlijke schakelaar aan staan.",
+      "ksem": {
+        "title": "KSEM (optioneel)",
+        "description": "De KSEM heeft een eigen adres, niet dat van de omvormer. Schakel Modbus TCP in op de KSEM (poort 502, zonder TLS). Laat het adres leeg als je geen KSEM hebt.",
         "data": {
-          "experimental_enabled": "Experimentele functies tonen",
-          "exp_ksem": "KSEM via Modbus TCP (categorie “KSEM”)",
-          "exp_efficiency": "Geschat batterijrendement",
           "ksem_host": "KSEM-adres (IP of hostnaam)",
           "ksem_port": "KSEM Modbus-poort (onversleuteld: 502)",
           "ksem_unit": "KSEM Modbus-unit-ID",
           "ksem_interval": "KSEM-pollinginterval"
         }
+      },
+      "experimental": {
+        "title": "Experimentele functies",
+        "description": "Deze functies zijn niet getest en standaard uit. Ze verschijnen alleen als de hoofdschakelaar en de afzonderlijke schakelaar aan staan.",
+        "data": {
+          "experimental_enabled": "Experimentele functies tonen",
+          "exp_efficiency": "Geschat batterijrendement",
+          "exp_history7": "Staafdiagram van 7 dagen in de statistiek",
+          "exp_panel": "Eigen pagina in de zijbalk"
+        }
       }
-    },
-    "error": {
-      "ksem_host_required": "Voor KSEM is een adres vereist."
     }
   },
   "selector": {

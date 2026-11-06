@@ -9,7 +9,7 @@
 
 Karte und Sensoren für den Kostal PLENTICORE plus, aufgebaut auf der **offiziellen** Home-Assistant-Integration „Kostal Plenticore Solar Inverter“. Der Manager öffnet keine zweite Verbindung zum Wechselrichter. Er liest die Entitäten der offiziellen Integration, zeigt nur Sensoren mit Werten, rechnet die Solarproduktion aus den von Dir gewählten Strings und ergänzt eine visuelle Statistik. Optional liest er einen KOSTAL Smart Energy Meter (KSEM) per Modbus TCP.
 
-> **Vorabversion 1.0.0b1.** Alles wurde nur gegen Testdaten und simulierte Schnittstellen geprüft, nichts an einer echten Anlage. Siehe [Bekannte Einschränkungen](#bekannte-einschränkungen) und [EXPERIMENTELL.md](EXPERIMENTELL.md).
+> **Vorabversion 1.0.0b2.** Alles wurde nur gegen Testdaten und simulierte Schnittstellen geprüft, nichts an einer echten Anlage. Siehe [Bekannte Einschränkungen](#bekannte-einschränkungen) und [EXPERIMENTELL.md](EXPERIMENTELL.md).
 
 ## Funktionsumfang
 
@@ -17,32 +17,38 @@ Karte und Sensoren für den Kostal PLENTICORE plus, aufgebaut auf der **offiziel
 - **Nur Sensoren mit Werten:** Fehlt ein Wert oder ist die Entität deaktiviert, erscheint sie nicht. Ein fehlender Wert wird nie als 0 angezeigt.
 - **Strings wählen:** Im Einrichtungsdialog und in den Optionen legst Du fest, welche der drei DC-Eingänge PV-Strings sind und welcher die Batterie ist (Standard: String 1 und 2 sind PV, Eingang 3 ist die Batterie). Der Batterie-Eingang zählt nie als PV.
 - **Neue Sensoren:** Solarleistung der gewählten Strings, Solarproduktion (heute, Monat, Jahr, gesamt), PV-Anteil am Hausverbrauch, Netzbilanz.
-- **Kategorien (Tabs):** Übersicht mit Energiefluss, Strings, Batterie, Statistik, KSEM (experimentell), Einstellungen. Jede Kategorie lässt sich im Editor ein- und ausschalten.
+- **Kategorien (Tabs):** Übersicht mit Energiefluss, Strings, Batterie, Statistik, KSEM, Einstellungen. Jede Kategorie lässt sich im Editor ein- und ausschalten. Bei wenig Platz zeigt die Tab-Leiste nur die Symbole, es gibt keinen Scrollbalken.
 - **Visuelle Statistik:** Zeitraum Heute, Monat, Jahr oder Gesamt; Ringdiagramm „Woher kommt der Strom?“, Tachos für Autarkie, Eigenverbrauch und PV-Anteil, Balken für Energiebilanz, Erzeugung je String und Batterie-Energie.
 - **Anlageneinstellungen:** Minimaler Ladestand, minimaler Hausverbrauch für Entladung und Batteriestrategie lassen sich ändern (nur Administratoren, nicht im Modus `read_only`).
-- **Experimentell (ausgeblendet):** KSEM über Modbus TCP und ein geschätzter Batteriewirkungsgrad.
+- **KSEM:** Der KOSTAL Smart Energy Meter wird per Modbus TCP gelesen (nur lesend, eigene Adresse, nicht die des Wechselrichters). Eine Adresse in der Einrichtung oder den Optionen genügt, die Kategorie *KSEM* und die Sensoren `ksem_*` erscheinen dann von selbst. Die Funktion ist **nicht** experimentell, aber noch nicht an einer echten Anlage geprüft.
+- **Experimentell (ausgeblendet):** 7-Tage-Balkendiagramm in der Statistik, eigene Seite „Kostal Manager“ in der Seitenleiste und ein geschätzter Batteriewirkungsgrad.
 - Mehrsprachig (Deutsch, Englisch, Niederländisch) in Einrichtung, Entitäten und Karte.
 
-## Neu in 1.0.0b1
+## Neu in 1.0.0b2
+
+Neues Symbol (Sonne über Solarmodulen, grün im Kreis): als Integrationssymbol und Logo in Home Assistant, im Kopf der Karte (wenn der Titel angezeigt wird) und in der Kopfzeile der Seitenleisten-Seite. Sonst keine Funktionsänderung gegenüber 1.0.0b1 (siehe Versionshistorie).
+
+## Enthalten seit 1.0.0b1
 
 Erste Veröffentlichung (Vorabversion). Alle Funktionen sind neu.
 
 ## Bilder
 
-Die Bilder zeigen **Testdaten**, keine echte Anlage. Stand der Version: 1.0.0b1.
+Die Bilder zeigen **Testdaten**, keine echte Anlage. Stand der Version: 1.0.0b2.
 
 | | |
 |---|---|
 | ![Übersicht mit Energiefluss (Testdaten)](docs/images/karte-uebersicht.webp) | ![Statistik (Testdaten)](docs/images/karte-statistik.webp) |
 | ![Strings (Testdaten)](docs/images/karte-strings.webp) | ![Batterie (Testdaten)](docs/images/karte-batterie.webp) |
-| ![KSEM, experimentell (Testdaten)](docs/images/karte-ksem.webp) | ![Einstellungen (Testdaten)](docs/images/karte-einstellungen.webp) |
+| ![KSEM (Testdaten)](docs/images/karte-ksem.webp) | ![Einstellungen (Testdaten)](docs/images/karte-einstellungen.webp) |
+| ![7-Tage-Diagramm, experimentell (Testdaten)](docs/images/karte-7tage.webp) | ![Schmale Karte mit Symbol-Tabs (Testdaten)](docs/images/karte-schmal.webp) |
 
 ## Voraussetzungen
 
 - Home Assistant ab 2025.6 (getestet nur mit 2026.2.3).
 - Die offizielle Integration **Kostal Plenticore Solar Inverter** ist eingerichtet.
 - Die Sensoren, die Du sehen möchtest, sind aktiviert. Die offizielle Integration lässt die meisten Sensoren deaktiviert. Der Manager kann sie auf Knopfdruck aktivieren (Einstellungen-Tab, nur Administratoren).
-- Optional für KSEM: Modbus TCP am KSEM aktiviert (Port 502, unverschlüsselt).
+- Optional für KSEM: Modbus TCP am KSEM aktiviert (Port 502, unverschlüsselt). Der KSEM hat eine eigene IP-Adresse.
 
 ## Installation
 
@@ -57,10 +63,11 @@ Danach Browser neu laden (Strg+F5). Die Karten-Ressource wird automatisch einget
 1. Einstellungen → Geräte & Dienste → Integration hinzufügen → **Kostal Manager**.
 2. Gibt es mehrere Kostal-Konfigurationen, wähle die passende.
 3. Wähle die PV-Strings und den Eingang der Batterie.
-4. Karte hinzufügen: Dashboard bearbeiten → Karte hinzufügen → **Kostal Manager**.
-5. Zeigt die Karte „Noch keine Werte“, öffne den Tab *Einstellungen* und aktiviere die deaktivierten Sensoren.
+4. Optional: Trage die Adresse Deines KSEM ein (leer lassen, wenn Du keinen hast). Port, Unit-ID und Intervall kannst Du später in den Optionen ändern.
+5. Karte hinzufügen: Dashboard bearbeiten → Karte hinzufügen → **Kostal Manager**.
+6. Zeigt die Karte „Noch keine Werte“, öffne den Tab *Einstellungen* und aktiviere die deaktivierten Sensoren.
 
-Optionen (Zahnrad der Integration): Strings ändern, dann der Dialog „Experimentelle Funktionen“.
+Optionen (Zahnrad der Integration): Strings ändern, dann KSEM (Adresse, Port, Unit-ID, Intervall), dann der Dialog „Experimentelle Funktionen“ mit Hauptschalter und den Schaltern für Wirkungsgrad, 7-Tage-Diagramm und Seitenleisten-Seite.
 
 ## Die Karte
 
@@ -86,7 +93,7 @@ Weitere Beispiele liegen in `examples/`. Alle Schlüssel:
 | `read_only` | `false` | Blendet alle Bedienelemente aus |
 | `show_experimental` | `false` | Zeigt experimentelle Funktionen (zusätzlich muss der Hauptschalter in den Optionen an sein) |
 
-Der Tab *KSEM* erscheint nur, wenn der Hauptschalter „Experimentelle Funktionen anzeigen“ in den Optionen, der Schalter für KSEM **und** `show_experimental` in der Karte eingeschaltet sind.
+Der Tab *KSEM* ist immer sichtbar. Ohne KSEM-Adresse erklärt er, was einzutragen ist. Das 7-Tage-Diagramm in der Statistik erscheint nur, wenn der Hauptschalter „Experimentelle Funktionen anzeigen“, der Schalter „7-Tage-Balkendiagramm“ **und** `show_experimental` in der Karte eingeschaltet sind. Es liest die Langzeitstatistik von Home Assistant (Recorder) und braucht aktivierte Energiezähler der Kostal-Integration.
 
 ## Farben
 
@@ -117,7 +124,7 @@ Es werden keine Home-Assistant-Ereignisse ausgelöst. Der Einstellungen-Tab füh
 | PV-Anteil am Hausverbrauch heute / gesamt | % | Verbrauch aus Solar geteilt durch Hausverbrauch |
 | Netzbilanz heute (Einspeisung minus Bezug) | kWh | |
 | Batteriewirkungsgrad (geschätzt) | % | experimentell |
-| `ksem_*`: Netzleistung, Frequenz, je Phase Spannung, Strom, Leistung, Zähler Bezug und Einspeisung | W, Hz, V, A, kWh | experimentell |
+| `ksem_*`: Netzleistung, Frequenz, je Phase Spannung, Strom, Leistung, Zähler Bezug und Einspeisung (nur mit KSEM-Adresse) | W, Hz, V, A, kWh | ungeprüft |
 
 Ist ein Eingangswert nicht vorhanden, ist der Sensor „nicht verfügbar“ statt 0. Der in der offiziellen Integration „Energy Yield“ genannte Wert ist **nicht** die Solarproduktion; der Manager rechnet sie deshalb aus den Strings.
 
@@ -142,6 +149,7 @@ Der Tab *Einstellungen* (Zahnrad) enthält: App-Version, Verbindung (gefundene u
 - Die Zuordnung der Kostal-Entitäten läuft über normalisierte Namen (z. B. `dc1_power`, `battery_soc`). Ob das bei Deiner Installation und Sprache jeden Sensor trifft, ist ungeprüft. Findet der Manager einen Sensor nicht, erscheint er nicht.
 - Die offizielle Integration liest Einstellwerte nur etwa alle 5 Minuten.
 - Ob das Aktivieren deaktivierter Sensoren die Kostal-Integration von selbst neu lädt, ist ungeprüft. Starte sie sonst über ihr Menü neu.
+- Die Seitenleisten-Seite (experimentell) zeigt dieselbe Karte als Vollbild-Seite. Sie erscheint nach einem Neustart der Integration (Optionen speichern lädt sie neu) und ist für alle Benutzer sichtbar; Änderungen bleiben Administratoren vorbehalten.
 - KSEM: nur Port 502 ohne TLS, die Unit-ID ist ungeklärt (Standard 1), nur dokumentierte Register werden gelesen.
 - Das GitHub-Repository ist ein Vorschlag (`Meine-smarte-Welt/kostal_manager`). Solange es nicht existiert, meldet die Update-Prüfung „Prüfung nicht möglich“.
 - Die Übersetzungen (Deutsch, Englisch, Niederländisch) sind nicht von Muttersprachlern geprüft.
@@ -151,7 +159,8 @@ Der Tab *Einstellungen* (Zahnrad) enthält: App-Version, Verbindung (gefundene u
 
 - **„Noch keine Werte“:** Sensoren der Kostal-Integration sind deaktiviert. Tab *Einstellungen* → „Deaktivierte Sensoren aktivieren“, dann einige Sekunden warten.
 - **Karte unbekannt:** Browser-Cache leeren (Strg+F5); im YAML-Modus die Ressource von Hand eintragen.
-- **KSEM-Tab fehlt:** Hauptschalter, KSEM-Schalter und `show_experimental` prüfen.
+- **KSEM zeigt „Adresse eintragen“:** Adresse des KSEM in den Optionen der Integration eintragen (Modbus TCP muss am KSEM aktiv sein).
+- **7-Tage-Diagramm fehlt:** Hauptschalter, Schalter „7-Tage-Balkendiagramm“ und `show_experimental` prüfen. Es braucht aktivierte Energiezähler und die Langzeitstatistik von Home Assistant.
 - **KSEM „modbus_exception_…“:** Andere Unit-ID in den Optionen probieren.
 - **Diagnose:** Einstellungen → Geräte & Dienste → Kostal Manager → Diagnose herunterladen (ohne Adressen und Entitäts-IDs).
 
@@ -159,7 +168,8 @@ Der Tab *Einstellungen* (Zahnrad) enthält: App-Version, Verbindung (gefundene u
 
 | Version | Änderung |
 |---|---|
-| **1.0.0b1** | Erste Veröffentlichung (Vorabversion): Zuordnung der Kostal-Entitäten, Stringauswahl, Karte mit Übersicht, Strings, Batterie, Statistik, Einstellungen; experimentell: KSEM per Modbus, geschätzter Batteriewirkungsgrad. |
+| **1.0.0b2** | Neues Symbol für Integration (`brand/`), Karte und Seitenleisten-Seite. Keine Funktionsänderung. |
+| **1.0.0b1** | Erste Veröffentlichung (Vorabversion): Zuordnung der Kostal-Entitäten, Stringauswahl, Karte mit Übersicht, Strings, Batterie, Statistik, Einstellungen; KSEM per Modbus (nicht experimentell, ungeprüft), Tab-Leiste ohne Scrollbalken; experimentell: 7-Tage-Balkendiagramm, Seitenleisten-Seite, geschätzter Batteriewirkungsgrad. |
 
 ## Datei-Integrität
 
@@ -168,12 +178,12 @@ Die `.py`-, `.js`- und `.yaml`-Dateien tragen in Zeile 1 ihre SHA-256-Prüfsumme
 | Datei | SHA-256 |
 |---|---|
 | `hacs.json` | `d448c6dd7a98d8741a9fdcf500def761d4824c3b18c4a269246616f0c4f27a79` |
-| `custom_components/kostal_manager/manifest.json` | `3126768f118b269b2c50fd97e6779f7509b0d35964d0413f0be03395b42a39b3` |
-| `custom_components/kostal_manager/strings.json` | `6b47d0e918e0110fb7d8dbd1ba608520570d38ae04465f97fe37acbd7c29cf08` |
+| `custom_components/kostal_manager/manifest.json` | `811222af9eb0e482e45687fc282aeaeee3c654d28ab358fd8bf7540135780130` |
+| `custom_components/kostal_manager/strings.json` | `549d1a52d3368de1cb990be2077823a79f4fd5e4842843b85061f07190f8be18` |
 | `custom_components/kostal_manager/icons.json` | `ec9720e4d2be322a2f1a8cd5485d2360bc97dce15ef0f896686b679507b9427e` |
-| `custom_components/kostal_manager/translations/de.json` | `6b47d0e918e0110fb7d8dbd1ba608520570d38ae04465f97fe37acbd7c29cf08` |
-| `custom_components/kostal_manager/translations/en.json` | `220faf916ae077c5a38868f1bad61ca7d416507ce2285b4ef5ef67119d7d6606` |
-| `custom_components/kostal_manager/translations/nl.json` | `87f97c1e204846ca305c0cacc5f35b3c76023bb9dd49101090cad10c1e070ba7` |
+| `custom_components/kostal_manager/translations/de.json` | `549d1a52d3368de1cb990be2077823a79f4fd5e4842843b85061f07190f8be18` |
+| `custom_components/kostal_manager/translations/en.json` | `53b1a31c1528df133490c50fa590c8d23d017243109ad3efd8431278143b23ff` |
+| `custom_components/kostal_manager/translations/nl.json` | `f6342c536164780c12efbb15936d4d3d724928a36e7ae6f114bc738c679f691d` |
 
 ## Lizenz
 

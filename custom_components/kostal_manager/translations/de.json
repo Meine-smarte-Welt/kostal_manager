@@ -2,7 +2,7 @@
   "config": {
     "step": {
       "user": {
-        "title": "Plenticore Manager",
+        "title": "Kostal Manager",
         "description": "Wähle die Kostal-Plenticore-Konfiguration, auf der der Manager aufbaut.",
         "data": {
           "kostal_entry_id": "Kostal-Plenticore-Konfiguration"
@@ -14,6 +14,16 @@
         "data": {
           "strings": "PV-Strings",
           "battery_input": "Eingang der Batterie"
+        }
+      },
+      "ksem": {
+        "title": "KSEM (optional)",
+        "description": "Der KSEM hat eine eigene Adresse, nicht die des Wechselrichters. Aktiviere am KSEM Modbus TCP (Port 502, ohne TLS). Adresse leer lassen, wenn Du keinen KSEM hast.",
+        "data": {
+          "ksem_host": "KSEM Adresse (IP oder Hostname)",
+          "ksem_port": "KSEM Modbus-Port (unverschlüsselt: 502)",
+          "ksem_unit": "KSEM Modbus-Unit-ID",
+          "ksem_interval": "KSEM Abfrageintervall"
         }
       }
     },
@@ -32,22 +42,26 @@
           "battery_input": "Eingang der Batterie"
         }
       },
-      "experimental": {
-        "title": "Experimentelle Funktionen",
-        "description": "Diese Funktionen sind ungeprüft und standardmäßig aus. Sie erscheinen nur, wenn der Hauptschalter und der jeweilige Schalter an sind.",
+      "ksem": {
+        "title": "KSEM (optional)",
+        "description": "Der KSEM hat eine eigene Adresse, nicht die des Wechselrichters. Aktiviere am KSEM Modbus TCP (Port 502, ohne TLS). Adresse leer lassen, wenn Du keinen KSEM hast.",
         "data": {
-          "experimental_enabled": "Experimentelle Funktionen anzeigen",
-          "exp_ksem": "KSEM über Modbus TCP (Kategorie „KSEM“)",
-          "exp_efficiency": "Geschätzter Batteriewirkungsgrad",
           "ksem_host": "KSEM Adresse (IP oder Hostname)",
           "ksem_port": "KSEM Modbus-Port (unverschlüsselt: 502)",
           "ksem_unit": "KSEM Modbus-Unit-ID",
           "ksem_interval": "KSEM Abfrageintervall"
         }
+      },
+      "experimental": {
+        "title": "Experimentelle Funktionen",
+        "description": "Diese Funktionen sind ungeprüft und standardmäßig aus. Sie erscheinen nur, wenn der Hauptschalter und der jeweilige Schalter an sind.",
+        "data": {
+          "experimental_enabled": "Experimentelle Funktionen anzeigen",
+          "exp_efficiency": "Geschätzter Batteriewirkungsgrad",
+          "exp_history7": "7-Tage-Balkendiagramm in der Statistik",
+          "exp_panel": "Eigene Seite in der Seitenleiste"
+        }
       }
-    },
-    "error": {
-      "ksem_host_required": "Für KSEM muss eine Adresse eingetragen werden."
     }
   },
   "selector": {

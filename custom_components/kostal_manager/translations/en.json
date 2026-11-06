@@ -2,7 +2,7 @@
   "config": {
     "step": {
       "user": {
-        "title": "Plenticore Manager",
+        "title": "Kostal Manager",
         "description": "Choose the Kostal Plenticore configuration the manager builds on.",
         "data": {
           "kostal_entry_id": "Kostal Plenticore configuration"
@@ -14,6 +14,16 @@
         "data": {
           "strings": "PV strings",
           "battery_input": "Battery input"
+        }
+      },
+      "ksem": {
+        "title": "KSEM (optional)",
+        "description": "The KSEM has its own address, not the inverter's. Enable Modbus TCP on the KSEM (port 502, no TLS). Leave the address empty if you have no KSEM.",
+        "data": {
+          "ksem_host": "KSEM address (IP or hostname)",
+          "ksem_port": "KSEM Modbus port (unencrypted: 502)",
+          "ksem_unit": "KSEM Modbus unit ID",
+          "ksem_interval": "KSEM polling interval"
         }
       }
     },
@@ -32,22 +42,26 @@
           "battery_input": "Battery input"
         }
       },
-      "experimental": {
-        "title": "Experimental features",
-        "description": "These features are untested and off by default. They only appear when the master switch and the individual switch are on.",
+      "ksem": {
+        "title": "KSEM (optional)",
+        "description": "The KSEM has its own address, not the inverter's. Enable Modbus TCP on the KSEM (port 502, no TLS). Leave the address empty if you have no KSEM.",
         "data": {
-          "experimental_enabled": "Show experimental features",
-          "exp_ksem": "KSEM via Modbus TCP (category “KSEM”)",
-          "exp_efficiency": "Estimated battery efficiency",
           "ksem_host": "KSEM address (IP or hostname)",
           "ksem_port": "KSEM Modbus port (unencrypted: 502)",
           "ksem_unit": "KSEM Modbus unit ID",
           "ksem_interval": "KSEM polling interval"
         }
+      },
+      "experimental": {
+        "title": "Experimental features",
+        "description": "These features are untested and off by default. They only appear when the master switch and the individual switch are on.",
+        "data": {
+          "experimental_enabled": "Show experimental features",
+          "exp_efficiency": "Estimated battery efficiency",
+          "exp_history7": "7-day bar chart in the statistics",
+          "exp_panel": "Own page in the sidebar"
+        }
       }
-    },
-    "error": {
-      "ksem_host_required": "An address is required for KSEM."
     }
   },
   "selector": {
