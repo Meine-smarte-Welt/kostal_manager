@@ -1,0 +1,9 @@
+# SHA256 (Inhalt ab Zeile 2, d.h. dieser Datei ohne diese erste Zeile): 30d8f763c7e1b7db4131e8d0083fc9972a4deacd63f9f75cf8430f5b225f3e95
+# Für Wanddisplays: nur Übersicht und Statistik, keine Bedienelemente
+type: custom:kostal-manager-card
+title: Solar
+show_strings: false
+show_battery: false
+show_ksem: false
+show_settings: false
+read_only: true

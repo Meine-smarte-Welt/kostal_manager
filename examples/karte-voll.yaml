@@ -1,0 +1,19 @@
+# SHA256 (Inhalt ab Zeile 2, d.h. dieser Datei ohne diese erste Zeile): 86d06b863578ce20be5a869b532bedce13b2d9c264d2f24f7cb8e95e7c4a0362
+type: custom:kostal-manager-card
+title: Photovoltaik
+show_title: true
+default_tab: overview
+stats_period: day
+zoom: 100
+read_only: false
+show_overview: true
+show_strings: true
+show_battery: true
+show_stats: true
+show_ksem: true
+show_settings: true
+show_experimental: false
+color_solar: "#f5a623"
+color_battery: "#43a047"
+color_grid: "#7e57c2"
+color_home: "#039be5"

@@ -1,0 +1,140 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Plenticore Manager",
+        "description": "Wähle die Kostal-Plenticore-Konfiguration, auf der der Manager aufbaut.",
+        "data": {
+          "kostal_entry_id": "Kostal-Plenticore-Konfiguration"
+        }
+      },
+      "strings": {
+        "title": "Strings festlegen",
+        "description": "Gefundene Kostal-Entitäten: {found}. Wähle die PV-Strings, die in Karte und Summen zählen. Der Batterie-Eingang wird nie als PV-String gerechnet.",
+        "data": {
+          "strings": "PV-Strings",
+          "battery_input": "Eingang der Batterie"
+        }
+      }
+    },
+    "abort": {
+      "no_kostal": "Die offizielle Integration „Kostal Plenticore Solar Inverter“ ist nicht eingerichtet. Richte sie zuerst ein.",
+      "already_configured": "Für diese Kostal-Konfiguration ist der Manager bereits eingerichtet."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Strings",
+        "description": "Version {version} · Update: {update_info}",
+        "data": {
+          "strings": "PV-Strings",
+          "battery_input": "Eingang der Batterie"
+        }
+      },
+      "experimental": {
+        "title": "Experimentelle Funktionen",
+        "description": "Diese Funktionen sind ungeprüft und standardmäßig aus. Sie erscheinen nur, wenn der Hauptschalter und der jeweilige Schalter an sind.",
+        "data": {
+          "experimental_enabled": "Experimentelle Funktionen anzeigen",
+          "exp_ksem": "KSEM über Modbus TCP (Kategorie „KSEM“)",
+          "exp_efficiency": "Geschätzter Batteriewirkungsgrad",
+          "ksem_host": "KSEM Adresse (IP oder Hostname)",
+          "ksem_port": "KSEM Modbus-Port (unverschlüsselt: 502)",
+          "ksem_unit": "KSEM Modbus-Unit-ID",
+          "ksem_interval": "KSEM Abfrageintervall"
+        }
+      }
+    },
+    "error": {
+      "ksem_host_required": "Für KSEM muss eine Adresse eingetragen werden."
+    }
+  },
+  "selector": {
+    "string_select": {
+      "options": {
+        "1": "String 1",
+        "2": "String 2",
+        "3": "String 3"
+      }
+    },
+    "battery_input_select": {
+      "options": {
+        "0": "Keiner (alle ausgewählten Eingänge sind PV)",
+        "1": "Eingang 1",
+        "2": "Eingang 2",
+        "3": "Eingang 3"
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "derived_solar_power_strings": {
+        "name": "Solarleistung (gewählte Strings)"
+      },
+      "derived_solar_energy_day": {
+        "name": "Solarproduktion heute"
+      },
+      "derived_solar_energy_month": {
+        "name": "Solarproduktion Monat"
+      },
+      "derived_solar_energy_year": {
+        "name": "Solarproduktion Jahr"
+      },
+      "derived_solar_energy_total": {
+        "name": "Solarproduktion gesamt"
+      },
+      "derived_pv_share_day": {
+        "name": "PV-Anteil am Hausverbrauch heute"
+      },
+      "derived_pv_share_total": {
+        "name": "PV-Anteil am Hausverbrauch gesamt"
+      },
+      "derived_grid_balance_day": {
+        "name": "Netzbilanz heute (Einspeisung minus Bezug)"
+      },
+      "derived_battery_efficiency_estimated": {
+        "name": "Batteriewirkungsgrad (geschätzt)"
+      },
+      "ksem_power": {
+        "name": "KSEM Netzleistung"
+      },
+      "ksem_frequency": {
+        "name": "KSEM Netzfrequenz"
+      },
+      "ksem_voltage_l1": {
+        "name": "KSEM Spannung L1"
+      },
+      "ksem_current_l1": {
+        "name": "KSEM Strom L1"
+      },
+      "ksem_power_l1": {
+        "name": "KSEM Leistung L1"
+      },
+      "ksem_voltage_l2": {
+        "name": "KSEM Spannung L2"
+      },
+      "ksem_current_l2": {
+        "name": "KSEM Strom L2"
+      },
+      "ksem_power_l2": {
+        "name": "KSEM Leistung L2"
+      },
+      "ksem_voltage_l3": {
+        "name": "KSEM Spannung L3"
+      },
+      "ksem_current_l3": {
+        "name": "KSEM Strom L3"
+      },
+      "ksem_power_l3": {
+        "name": "KSEM Leistung L3"
+      },
+      "ksem_energy_import": {
+        "name": "KSEM Zähler Bezug"
+      },
+      "ksem_energy_export": {
+        "name": "KSEM Zähler Einspeisung"
+      }
+    }
+  }
+}

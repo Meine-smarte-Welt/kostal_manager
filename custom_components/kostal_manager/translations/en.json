@@ -1,0 +1,140 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Plenticore Manager",
+        "description": "Choose the Kostal Plenticore configuration the manager builds on.",
+        "data": {
+          "kostal_entry_id": "Kostal Plenticore configuration"
+        }
+      },
+      "strings": {
+        "title": "Choose strings",
+        "description": "Kostal entities found: {found}. Choose the PV strings that count in the card and in the sums. The battery input is never counted as a PV string.",
+        "data": {
+          "strings": "PV strings",
+          "battery_input": "Battery input"
+        }
+      }
+    },
+    "abort": {
+      "no_kostal": "The official “Kostal Plenticore Solar Inverter” integration is not set up. Set it up first.",
+      "already_configured": "The manager is already set up for this Kostal configuration."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Strings",
+        "description": "Version {version} · Update: {update_info}",
+        "data": {
+          "strings": "PV strings",
+          "battery_input": "Battery input"
+        }
+      },
+      "experimental": {
+        "title": "Experimental features",
+        "description": "These features are untested and off by default. They only appear when the master switch and the individual switch are on.",
+        "data": {
+          "experimental_enabled": "Show experimental features",
+          "exp_ksem": "KSEM via Modbus TCP (category “KSEM”)",
+          "exp_efficiency": "Estimated battery efficiency",
+          "ksem_host": "KSEM address (IP or hostname)",
+          "ksem_port": "KSEM Modbus port (unencrypted: 502)",
+          "ksem_unit": "KSEM Modbus unit ID",
+          "ksem_interval": "KSEM polling interval"
+        }
+      }
+    },
+    "error": {
+      "ksem_host_required": "An address is required for KSEM."
+    }
+  },
+  "selector": {
+    "string_select": {
+      "options": {
+        "1": "String 1",
+        "2": "String 2",
+        "3": "String 3"
+      }
+    },
+    "battery_input_select": {
+      "options": {
+        "0": "None (all selected inputs are PV)",
+        "1": "Input 1",
+        "2": "Input 2",
+        "3": "Input 3"
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "derived_solar_power_strings": {
+        "name": "Solar power (selected strings)"
+      },
+      "derived_solar_energy_day": {
+        "name": "Solar production today"
+      },
+      "derived_solar_energy_month": {
+        "name": "Solar production month"
+      },
+      "derived_solar_energy_year": {
+        "name": "Solar production year"
+      },
+      "derived_solar_energy_total": {
+        "name": "Solar production total"
+      },
+      "derived_pv_share_day": {
+        "name": "PV share of home consumption today"
+      },
+      "derived_pv_share_total": {
+        "name": "PV share of home consumption total"
+      },
+      "derived_grid_balance_day": {
+        "name": "Grid balance today (feed-in minus import)"
+      },
+      "derived_battery_efficiency_estimated": {
+        "name": "Battery efficiency (estimated)"
+      },
+      "ksem_power": {
+        "name": "KSEM grid power"
+      },
+      "ksem_frequency": {
+        "name": "KSEM grid frequency"
+      },
+      "ksem_voltage_l1": {
+        "name": "KSEM voltage L1"
+      },
+      "ksem_current_l1": {
+        "name": "KSEM current L1"
+      },
+      "ksem_power_l1": {
+        "name": "KSEM power L1"
+      },
+      "ksem_voltage_l2": {
+        "name": "KSEM voltage L2"
+      },
+      "ksem_current_l2": {
+        "name": "KSEM current L2"
+      },
+      "ksem_power_l2": {
+        "name": "KSEM power L2"
+      },
+      "ksem_voltage_l3": {
+        "name": "KSEM voltage L3"
+      },
+      "ksem_current_l3": {
+        "name": "KSEM current L3"
+      },
+      "ksem_power_l3": {
+        "name": "KSEM power L3"
+      },
+      "ksem_energy_import": {
+        "name": "KSEM import counter"
+      },
+      "ksem_energy_export": {
+        "name": "KSEM export counter"
+      }
+    }
+  }
+}

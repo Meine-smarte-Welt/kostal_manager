@@ -1,0 +1,8 @@
+{
+  "entity": {
+    "sensor": {
+      "derived_solar_power_strings": {"default": "mdi:solar-power-variant"},
+      "derived_battery_efficiency_estimated": {"default": "mdi:battery-heart-variant"}
+    }
+  }
+}
